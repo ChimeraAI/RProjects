@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "#This is just to test the git command commit and push commands\n\nset.seed(22)\n\ndataFrame <- read.csv(\"bank-full.csv\", sep = \";\", header = TRUE)\n\napply(dataFrame,2,function(x) length(unique(x)))\n\ndataFrame$day <- NULL\n\ncols <- c(\"job\",\"marital\",\"education\",\"default\",\"housing\",\"loan\",\"contact\",\"poutcome\",\"y\")\nfor(i in cols) {\n  dataFrame[,i] = as.factor(dataFrame[,i])\n}\n\nbarplot(table(dataFrame$education))\n",
+    "created" : 1503072347726.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1819497870",
+    "id" : "A3265D9E",
+    "lastKnownWriteTime" : 1503072600,
+    "last_content_update" : 1503072600043,
+    "path" : "~/GitHub/RProjects/RandomForest/Code.R",
+    "project_path" : "Code.R",
+    "properties" : {
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
