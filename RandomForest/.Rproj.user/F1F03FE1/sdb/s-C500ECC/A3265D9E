@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "# Load libraries ---------------------------------------\nlibrary(magrittr)\nlibrary(mlbench)\nlibrary(caret)\nlibrary(caretEnsemble)\n\nset.seed(22)\n\ndataFrame <- read.csv(\"bank-full.csv\", sep = \";\", header = TRUE)\n\napply(dataFrame,2,function(x) length(unique(x)))\n\n\n# Getting rid of irrelevant data ----------------------------------------\ndataFrame$day <- NULL\n# Not sure the purpose of this feature. Don't want to deal with unknow features\ndataFrame$balance <- NULL\n\n\n# Converting categorical features to factor variables as oppose to numerical -----------------------------------\ncols <- c(\"job\",\"marital\",\"education\",\"default\",\"housing\",\"loan\",\"contact\",\"poutcome\",\"y\")\nfor(i in cols) {\n  dataFrame[,i] = as.factor(dataFrame[,i])\n}\n\n# Example of Stacking algorithms\n# create submodels\ncontrol <- trainControl(method=\"repeatedcv\", number=10, repeats=3, savePredictions=TRUE, classProbs=TRUE)\nalgorithmList <- c('lda', 'rpart', 'glm', 'knn', 'svmRadial')\nset.seed(seed)\nmodels <- caretList(Class~., data=dataset, trControl=control, methodList=algorithmList)\nresults <- resamples(models)\nsummary(results)\ndotplot(results)\n\n\n\n\n\n",
+    "created" : 1503072347726.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "996610503",
+    "id" : "A3265D9E",
+    "lastKnownWriteTime" : 1503343676,
+    "last_content_update" : 1503343676646,
+    "path" : "~/GitHub/RProjects/RandomForest/Code.R",
+    "project_path" : "Code.R",
+    "properties" : {
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

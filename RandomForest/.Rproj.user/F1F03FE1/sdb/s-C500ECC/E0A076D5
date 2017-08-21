@@ -1,0 +1,29 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1503343668657.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "E0A076D5",
+    "lastKnownWriteTime" : 2770669711961712741,
+    "last_content_update" : 1503343668657,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "E62B94AE",
+        "caption" : "vehicles",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=vehicles&cache_key=E62B94AE",
+        "displayedObservations" : "34631",
+        "environment" : "",
+        "object" : "vehicles",
+        "preview" : "0",
+        "totalObservations" : "34631",
+        "variables" : "24"
+    },
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}
