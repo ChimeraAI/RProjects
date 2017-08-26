@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "library(caret)\nnames(getModelInfo())\n\n# Load data from Hadley Wickham on Github - Vehicle data set and predict 6 cylinder vehicles\nlibrary(RCurl)\n#urlData <- getURL('https://raw.githubusercontent.com/hadley/fueleconomy/master/data-raw/vehicles.csv')\n#vehicles <- read.csv(text = urlData)\n\n# alternative way of getting the data\nurlfile <-'https://raw.githubusercontent.com/hadley/fueleconomy/master/data-raw/vehicles.csv'\nx <- getURL(urlfile, ssl.verifypeer = FALSE)\nvehicles <- read.csv(textConnection(x))\n\n# clean up the data and only use the first 24 columns\nvehicles <- vehicles[names(vehicles)[1:24]]\nvehicles <- data.frame(lapply(vehicles, as.character), stringsAsFactors=FALSE)\nvehicles <- data.frame(lapply(vehicles, as.numeric))\nvehicles[is.na(vehicles)] <- 0\nvehicles$cylinders <- ifelse(vehicles$cylinders == 6, 1,0)\n\nprop.table(table(vehicles$cylinders))\n\n# shuffle and split the data into three parts\nset.seed(1234)\nvehicles <- vehicles[sample(nrow(vehicles)),]\nsplit <- floor(nrow(vehicles)/3)\nensembleData <- vehicles[0:split,]\nblenderData <- vehicles[(split+1):(split*2),]\ntestingData <- vehicles[(split*2+1):nrow(vehicles),]\n\n# set label name and predictors\nlabelName <- 'cylinders'\npredictors <- names(ensembleData)[names(ensembleData) != labelName]\n\nlibrary(caret)\n# create a caret control object to control the number of cross-validations performed\nmyControl <- trainControl(method='cv', number=4, returnResamp='none')\n\n# quick benchmark model \ntest_model <- train(blenderData[,predictors], blenderData[,labelName], method='gbm', trControl=myControl)\npreds <- predict(object=test_model, testingData[,predictors])\n\nlibrary(pROC)\nauc <- roc(testingData[,labelName], preds)\nprint(auc$auc) # Area under the curve: 0.9896\n\n# train all the ensemble models with ensembleData\nmodel_gbm <- train(ensembleData[,predictors], ensembleData[,labelName], method='gbm', trControl=myControl)\nmodel_rf <- train(ensembleData[,predictors], ensembleData[,labelName], method='randomForest', trControl=myControl)\nmodel_treebag <- train(ensembleData[,predictors], ensembleData[,labelName], method='treebag', trControl=myControl)\n\n# get predictions for each ensemble model for two last data sets\n# and add them back to themselves\nblenderData$gbm_PROB <- predict(object=model_gbm, blenderData[,predictors])\nblenderData$rf_PROB <- predict(object=model_rpart, blenderData[,predictors])\nblenderData$treebag_PROB <- predict(object=model_treebag, blenderData[,predictors])\ntestingData$gbm_PROB <- predict(object=model_gbm, testingData[,predictors])\ntestingData$rf_PROB <- predict(object=model_rpart, testingData[,predictors])\ntestingData$treebag_PROB <- predict(object=model_treebag, testingData[,predictors])\n\n# see how each individual model performed on its own\nauc <- roc(testingData[,labelName], testingData$gbm_PROB )\nprint(auc$auc) # Area under the curve: 0.9893\n\nauc <- roc(testingData[,labelName], testingData$rf_PROB )\nprint(auc$auc) # Area under the curve: 0.958\n\nauc <- roc(testingData[,labelName], testingData$treebag_PROB )\nprint(auc$auc) # Area under the curve: 0.9734\n\n# run a final model to blend all the probabilities together\npredictors <- names(blenderData)[names(blenderData) != labelName]\nfinal_blender_model <- train(blenderData[,predictors], blenderData[,labelName], method='gbm', trControl=myControl)\n\n# See final prediction and AUC of blended ensemble\npreds <- predict(object=final_blender_model, testingData[,predictors])\nauc <- roc(testingData[,labelName], preds)\nprint(auc$auc)  # Area under the curve: 0.9922",
+    "created" : 1503339346172.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3954347757",
+    "id" : "F25B9EEF",
+    "lastKnownWriteTime" : 1503498214,
+    "last_content_update" : 1503498214253,
+    "path" : "~/GitHub/RProjects/RandomForest/TestCode.R",
+    "project_path" : "TestCode.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

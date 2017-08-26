@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "# Implementation of xgboost\n# Load libraries ---------------------------------------\nlibrary(caret)\nlibrary(caTools)\nlibrary(xgboost)\nlibrary(Matrix)\nlibrary(car)\n\ndataFrame <- read.csv(\"bank-full.csv\", sep = \";\", header = TRUE)\n\ndataFrame$day <- NULL\n\ndataFrame$y <- as.numeric(dataFrame$y)\n\nohe_feats = c(\"job\",\"marital\",\"education\",\"default\",\"housing\",\"loan\",\"contact\",\"poutcome\",\"month\")\n\ndummies <- dummyVars(~ job + marital + education + default + housing + loan + contact + poutcome + month, data = dataFrame)\n\ndf_all_ohe <- data.frame(predict(dummies, newdata = dataFrame))\n\ndf_all_combined <- cbind(dataFrame[,-c(which(colnames(dataFrame) %in% ohe_feats))],df_all_ohe)\n\n# Shuffle data\ndf_all_combined <- df_all_combined[sample(nrow(df_all_combined)),]\n\n# Split data\ntempData <- sample.split(df_all_combined$y, SplitRatio = 0.7)\ntrainData <- df_all_combined[tempData,]\ntestData <- df_all_combined[!tempData,]\n\ndrop <- (\"y\")\n\nxgb <- xgboost(data = data.matrix(trainData[,!(names(trainData) %in% drop)]), \n               label = trainData$y, \n               eta = 0.1,\n               max_depth = 15, \n               nround=25, \n               subsample = 0.5,\n               colsample_bytree = 0.5,\n               seed = 1,\n               eval_metric = \"merror\",\n               objective = \"multi:softprob\",\n               num_class = 51,\n               nthread = 3\n)\n\ny_pred <- predict(xgb, data.matrix(trainData[,!(names(trainData) %in% drop)]))\n\n\n\n\n\n\n\n\n",
+    "created" : 1503072347726.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "894472749",
+    "id" : "A3265D9E",
+    "lastKnownWriteTime" : 1503597907,
+    "last_content_update" : 1503597907223,
+    "path" : "~/GitHub/RProjects/RandomForest/Code.R",
+    "project_path" : "Code.R",
+    "properties" : {
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
