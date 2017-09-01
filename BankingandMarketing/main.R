@@ -8,9 +8,9 @@ library(parallel)
 library(parallelMap)
 
 # Source functions from other files
-source("Stacking.R")
-source("Boosting.R")
-source("Bagging.R")
+source("BankingandMarketing/Stacking.R")
+source("BankingandMarketing/Boosting.R")
+source("BankingandMarketing/Bagging.R")
 
 #Read and separate raw data
 rawData <- read.csv("BankingandMarketing/bank-full.csv", sep = ";", header = TRUE)
@@ -20,4 +20,15 @@ setDT(rawData)
 
 #Set seed
 set.seed(11)
+
+#Boosting
+boostingFunc(rawData)
+
+#Stacking
+#stackingFunc(rawData)
+
+#Bagging
+#baggingFunc(rawData)
+
+
 

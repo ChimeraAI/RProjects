@@ -1,11 +1,3 @@
-#Load libraries
-library(data.table)
-library(caret)
-library(xgboost)
-library(mlr)
-library(caTools)
-library(parallel)
-library(parallelMap)
 
 stackingFunc <- function(rawData) {
 
