@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "#Load libraries\nlibrary(data.table)\nlibrary(caret)\nlibrary(xgboost)\nlibrary(mlr)\nlibrary(caTools)\n\n#Read and separate raw data\nrawData <- read.csv(\"bank-full.csv\", sep = \";\", header = TRUE)\n\n#Convert to DataFrame\nsetDT(rawData)\n\n#Set seed\nset.seed(11)\n\ntsk <-  makeClassifTask(data = rawData, target = \"y\")\n\nbase = c(\"classif.rpart\", \"classif.lda\", \"classif.svm\")\nlrns = lapply(base, makeLearner)\nlrns = lapply(lrns, setPredictType, \"prob\")\nm = makeStackedLearner(base.learners = lrns,\n                       predict.type = \"prob\", method = \"hill.climb\")][]\ntmp = train(m, tsk)\nres = predict(tmp, tsk)\n\nlibrary(parallel)\nlibrary(parallelMap)\nparallelStartSocket(cpus = detectCores())",
+    "created" : 1504198968414.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "4154624631",
+    "id" : "C38FB7A2",
+    "lastKnownWriteTime" : 1504212040,
+    "last_content_update" : 1504212040237,
+    "path" : "~/GitHub/RProjects/BankingandMarketing/Stacking.R",
+    "project_path" : "Stacking.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

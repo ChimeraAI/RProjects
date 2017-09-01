@@ -1,9 +1,8 @@
-# Use xgboost algorithm to make binary classification with grid search for hypertuning parameters
+# Use xgboost algorithm to make binary classification with random search for hypertuning parameters
 #Load libraries
 library(data.table)
 library(caret)
 library(xgboost)
-# Has the grid search option for hypertuning as oppose to xgboost library
 library(mlr)
 library(caTools)
 
@@ -20,15 +19,6 @@ set.seed(11)
 tempData <- sample.split(rawData$y, SplitRatio = 0.7)
 trainData <- rawData[tempData]
 testData <- rawData[!tempData]
-
-tr_target <- trainData$y
-test_target <- testData$y
-
-new_tr <- model.matrix(~.+0, data = trainData[,-c("y")])
-new_test <- model.matrix(~.+0, data = testData[,-c("y")])
-
-tr_target <- as.numeric(tr_target) - 1
-test_target <- as.numeric(test_target) - 1
 
 #Convert characters to factors
 fact_col <- colnames(trainData)[sapply(trainData,is.character)]
@@ -57,8 +47,8 @@ params <- makeParamSet( makeNumericParam("eta",lower = 0.05L, upper = 0.15L),
 # 10-fold cross validation
 rdesc <- makeResampleDesc("CV",stratify = T,iters=10L)
 
-# Grid search
-ctrl <- makeTuneControlGrid(resolution = 15)
+# Random Search
+ctrl <- makeTuneControlRandom(maxit = 15L)
 
 library(parallel)
 library(parallelMap)
@@ -66,10 +56,5 @@ parallelStartSocket(cpus = detectCores())
 
 mytune <- tuneParams(learner = lrn, task = traintask, resampling = rdesc, measures = acc, par.set = params, control = ctrl, show.info = T)
 
-lrn_tune <- setHyperPars(lrn,par.vals = mytune$x)
-
-xgmodel <- train(learner = lrn_tune,task = traintask)
-
-xgpred <- predict(xgmodel,testtask)
-
-confusionMatrix(xgpred$data$response,xgpred$data$truth) 
+#stop parallelization
+parallelStop()

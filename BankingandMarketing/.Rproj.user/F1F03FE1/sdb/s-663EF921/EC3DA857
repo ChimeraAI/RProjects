@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "# Use xgboost algorithm to make binary classification with random search for hypertuning parameters\n#Load libraries\nlibrary(data.table)\nlibrary(caret)\nlibrary(xgboost)\nlibrary(mlr)\nlibrary(caTools)\n\n#Read and separate raw data\nrawData <- read.csv(\"bank-full.csv\", sep = \";\", header = TRUE)\n\n#Convert to DataFrame\nsetDT(rawData)\n\n#Set seed\nset.seed(11)\n\n#Split rawData into training and testing data\ntempData <- sample.split(rawData$y, SplitRatio = 0.7)\ntrainData <- rawData[tempData]\ntestData <- rawData[!tempData]\n\n#Convert characters to factors\nfact_col <- colnames(trainData)[sapply(trainData,is.character)]\n\nfor(i in fact_col) set(trainData,j=i,value = factor(trainData[[i]]))\nfor (i in fact_col) set(testData,j=i,value = factor(testData[[i]]))\n\n#Create Tasks\ntraintask <- makeClassifTask (data = trainData,target = \"y\")\ntesttask <- makeClassifTask (data = testData,target = \"y\")\n\n# Perform one hot encoding\ntraintask <- createDummyFeatures (obj = traintask)\ntesttask <- createDummyFeatures (obj = testtask)\n\n#Create Learner\nlrn <- makeLearner(\"classif.xgboost\", predict.type = \"response\")\n\nlrn$par.vals <- list( objective=\"binary:logistic\", eval_metric=\"error\", nrounds=100L, colsample_bytree = 1, \n                      booster = gbtree, subsample = 1, min_child_weight = 1, max_depth = 7)\n\nparams <- makeParamSet( makeNumericParam(\"eta\",lower = 0.05L, upper = 0.15L),\n                        makeIntegerParam(\"gamma\",lower = 0, upper = 6),\n                        makeNumericParam(\"alpha\",lower = 0.5,upper = 2))\n\n# 10-fold cross validation\nrdesc <- makeResampleDesc(\"CV\",stratify = T,iters=10L)\n\n# Random Search\nctrl <- makeTuneControlRandom(maxit = 15L)\n\nlibrary(parallel)\nlibrary(parallelMap)\nparallelStartSocket(cpus = detectCores())\n\nmytune <- tuneParams(learner = lrn, task = traintask, resampling = rdesc, measures = acc, par.set = params, control = ctrl, show.info = T)\n\n#stop parallelization\nparallelStop()",
+    "created" : 1504198954115.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "91126920",
+    "id" : "EC3DA857",
+    "lastKnownWriteTime" : 1504208935,
+    "last_content_update" : 1504208935640,
+    "path" : "~/GitHub/RProjects/BankingandMarketing/Boosting.R",
+    "project_path" : "Boosting.R",
+    "properties" : {
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
