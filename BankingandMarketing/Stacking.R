@@ -6,7 +6,7 @@ library(mlr)
 library(caTools)
 
 #Read and separate raw data
-rawData <- read.csv("bank-full.csv", sep = ";", header = TRUE)
+rawData <- read.csv("BankingandMarketing/bank-full.csv", sep = ";", header = TRUE)
 
 #Convert to DataFrame
 setDT(rawData)
@@ -20,7 +20,7 @@ base = c("classif.rpart", "classif.lda", "classif.svm")
 lrns = lapply(base, makeLearner)
 lrns = lapply(lrns, setPredictType, "prob")
 m = makeStackedLearner(base.learners = lrns,
-                       predict.type = "prob", method = "hill.climb")][]
+                       predict.type = "prob", method = "hill.climb")
 tmp = train(m, tsk)
 res = predict(tmp, tsk)
 
