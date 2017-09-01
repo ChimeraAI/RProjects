@@ -7,7 +7,7 @@ library(mlr)
 library(caTools)
 
 #Read and separate raw data
-rawData <- read.csv("bank-full.csv", sep = ";", header = TRUE)
+rawData <- read.csv("BankingandMarketing/bank-full.csv", sep = ";", header = TRUE)
 
 #Convert to DataFrame
 setDT(rawData)
@@ -31,8 +31,8 @@ traintask <- makeClassifTask (data = trainData,target = "y")
 testtask <- makeClassifTask (data = testData,target = "y")
 
 # Perform one hot encoding
-traintask <- createDummyFeatures (obj = traintask)
-testtask <- createDummyFeatures (obj = testtask)
+traintask <- createDummyFeatures (obj = traintask, target = "y")
+testtask <- createDummyFeatures (obj = testtask, target = "y")
 
 #Create Learner
 lrn <- makeLearner("classif.xgboost", predict.type = "response")
@@ -45,10 +45,10 @@ params <- makeParamSet( makeNumericParam("eta",lower = 0.05L, upper = 0.15L),
                         makeNumericParam("alpha",lower = 0.5,upper = 2))
 
 # 10-fold cross validation
-rdesc <- makeResampleDesc("CV",stratify = T,iters=10L)
+rdesc <- makeResampleDesc("CV",stratify = T,iters=15L)
 
 # Random Search
-ctrl <- makeTuneControlRandom(maxit = 15L)
+ctrl <- makeTuneControlRandom(maxit = 10L)
 
 library(parallel)
 library(parallelMap)
