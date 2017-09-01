@@ -15,7 +15,7 @@ source("Bagging.R")
 #Read and separate raw data
 rawData <- read.csv("BankingandMarketing/bank-full.csv", sep = ";", header = TRUE)
 
-#Convert to DataFrame
+#Convert to DataFrame dsaf
 setDT(rawData)
 
 #Set seed
