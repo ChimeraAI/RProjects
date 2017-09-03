@@ -31,6 +31,4 @@ stackingFunc <- function(rawData) {
   
   return (performance(res, measures = acc))
 
-
-
 }
